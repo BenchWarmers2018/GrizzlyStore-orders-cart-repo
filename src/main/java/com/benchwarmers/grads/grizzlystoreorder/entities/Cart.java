@@ -4,6 +4,8 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -22,5 +24,9 @@ public class Cart {
     @Column(name = "last_modified", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date last_modified;
+
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
+    private Set<CartList> items;
+
 
 }
