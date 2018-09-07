@@ -3,17 +3,19 @@ package com.benchwarmers.grads.grizzlystoreorder.entities;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "order")
-public class Order {
+@Table(name = "transaction")
+public class Transaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id_Order", nullable = false)
-    private Integer id_Order;
+    @Column(name = "id_transaction", nullable = false)
+    private Integer id_transaction;
 
     @Column(name = "id_Account_Foreign", nullable = false)
     private UUID id_Account_Foreign;
@@ -25,4 +27,8 @@ public class Order {
     @Column(name = "last_modified", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date last_modified;
+
+    @OneToMany(mappedBy="transaction")
+    private List<TransactionItem> items = new ArrayList<>();
+
 }
