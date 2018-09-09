@@ -9,6 +9,6 @@ public class GrizzlystoreOrderApplication {
     public static void main(String[] args) {
         SpringApplication.run(GrizzlystoreOrderApplication.class, args);
 
-        System.out.println("Avi in Order repo....");
+        System.out.println("Avi in Transaction repo....");
     }
 }
