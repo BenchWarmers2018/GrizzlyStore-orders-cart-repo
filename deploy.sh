@@ -4,7 +4,7 @@ pwd && cd target
 
 if (( $(ps -ef | grep -v grep | grep grizzlystore-order | wc -l) > 0))
 	then
-		echo "User service is running...attempting to stop service!"
+		echo "Order service is running...attempting to stop service!"
 		sudo systemctl stop grizzlystore-order.service || true
 fi
 
