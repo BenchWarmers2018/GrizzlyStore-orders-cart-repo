@@ -19,25 +19,24 @@ public class CartController
 
     //This gets all items in the cart or creates a new cart for the user if they do not have one.
     @RequestMapping(path = "/items", method = RequestMethod.POST)
-    public Cart getCart(@RequestParam String id)
+    public Cart getCart(@RequestBody Cart cart)
     {
         //Grabs the id sent in and converts it to UUID
-        UUID accountUUID = UUID.fromString(id);
+        UUID accountUUID = cart.getIdAccountForeign();
         //Creates new cart object.
-        Cart cart = new Cart();
+        Cart newCart = new Cart();
         //Checks if a cart exists if it does it fetches it else creates a new cart and returns it.
-        System.out.println("id "+ accountUUID);
         if (cart_repository.existsByIdAccountForeign(accountUUID))
         {
-            cart = cart_repository.findCartByIdAccountForeign(accountUUID);
+            newCart = cart_repository.findCartByIdAccountForeign(accountUUID);
         }
         else
         {
-            cart.setIdAccountForeign(accountUUID);
-            cart_repository.save(cart);
+            newCart.setIdAccountForeign(accountUUID);
+            cart_repository.save(newCart);
         }
 
-        return cart;
+        return newCart;
     }
     //This adds an item to an existing cart.
     @RequestMapping(path = "/add", method = RequestMethod.POST)
