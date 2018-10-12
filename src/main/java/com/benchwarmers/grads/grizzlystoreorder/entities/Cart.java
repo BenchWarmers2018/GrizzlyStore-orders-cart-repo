@@ -1,6 +1,7 @@
 package com.benchwarmers.grads.grizzlystoreorder.entities;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -14,11 +15,12 @@ public class Cart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id_Cart", nullable = false)
-    private Integer id_Cart;
+    @Column(name = "idCart", nullable = false)
+    private Integer idCart;
 
-    @Column(name = "id_Account_Foreign", nullable = false)
-    private UUID id_Account_Foreign;
+    @Column(name = "idAccountForeign", nullable = false)
+    @Type(type="uuid-char")
+    private UUID idAccountForeign;
 
     @CreationTimestamp
     @Column(name = "last_modified", nullable = false)
@@ -28,20 +30,20 @@ public class Cart {
     @OneToMany(mappedBy="cart", cascade = CascadeType.ALL)
     private List<CartItem> items = new ArrayList<>();
 
-    public Integer getId_Cart() {
-        return id_Cart;
+    public Integer getIdCart() {
+        return idCart;
     }
 
-    public void setId_Cart(Integer id_Cart) {
-        this.id_Cart = id_Cart;
+    public void setIdCart(Integer idCart) {
+        this.idCart = idCart;
     }
 
-    public UUID getId_Account_Foreign() {
-        return id_Account_Foreign;
+    public UUID getIdAccountForeign() {
+        return idAccountForeign;
     }
 
-    public void setId_Account_Foreign(UUID id_Account_Foreign) {
-        this.id_Account_Foreign = id_Account_Foreign;
+    public void setIdAccountForeign(UUID idAccountForeign) {
+        this.idAccountForeign = idAccountForeign;
     }
 
     public Date getLast_modified() {
@@ -56,8 +58,22 @@ public class Cart {
         return items;
     }
 
+
     public void setItems(List<CartItem> items) {
+        items.forEach(cartItem -> cartItem.setCart(this));
         this.items = items;
+    }
+
+    public void addItem(CartItem item)
+    {
+        item.setCart(this);
+        items.add(item);
+    }
+
+    public void removeItem(CartItem item)
+    {
+        item.setCart(this);
+        items.remove(item);
     }
 
 
