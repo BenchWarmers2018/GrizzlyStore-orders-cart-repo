@@ -1,5 +1,6 @@
 package com.benchwarmers.grads.grizzlystoreorder.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -11,15 +12,15 @@ public class CartItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id_CartItem", nullable = false)
-    private Integer id_CartItem;
+    @Column(name = "idCartItem", nullable = false)
+    private Integer idCartItem;
 
 
-    @Column(name = "id_Item", nullable = false)
-    private Integer id_Item;
+    @Column(name = "idItem", nullable = false)
+    private Integer idItem;
 
-    @Column(name = "item_Quantity", nullable = false)
-    private Integer item_Quantity;
+    @Column(name = "itemQuantity", nullable = false)
+    private Integer itemQuantity;
 
     @CreationTimestamp
     @Column(name = "last_modified", nullable = false)
@@ -29,33 +30,34 @@ public class CartItem {
 
     @ManyToOne
     @JoinColumn(name="id_Cart_foreign", nullable=false)
+    @JsonIgnore
     private Cart cart;
 
     //Getters and setters
 
 
-    public Integer getId_CartItem() {
-        return id_CartItem;
+    public Integer getIdCartItem() {
+        return idCartItem;
     }
 
-    public void setId_CartItem(Integer id_CartItem) {
-        this.id_CartItem = id_CartItem;
+    public void setIdCartItem(Integer idCartItem) {
+        this.idCartItem = idCartItem;
     }
 
-    public Integer getId_Item() {
-        return id_Item;
+    public Integer getIdItem() {
+        return idItem;
     }
 
-    public void setId_Item(Integer id_Item) {
-        this.id_Item = id_Item;
+    public void setIdItem(Integer idItem) {
+        this.idItem = idItem;
     }
 
-    public Integer getItem_Quantity() {
-        return item_Quantity;
+    public Integer getItemQuantity() {
+        return itemQuantity;
     }
 
-    public void setItem_Quantity(Integer item_Quantity) {
-        this.item_Quantity = item_Quantity;
+    public void setItemQuantity(Integer itemQuantity) {
+        this.itemQuantity = itemQuantity;
     }
 
     public Date getLast_modified() {
