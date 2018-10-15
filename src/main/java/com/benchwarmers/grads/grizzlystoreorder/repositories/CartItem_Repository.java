@@ -7,5 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CartItem_Repository extends JpaRepository<CartItem, Integer>
 {
-    void removeCartItemByIdCartItem(int id);
+    void removeCartItemByIdItem(int id);
+    CartItem findByIdItem(int id);
 }

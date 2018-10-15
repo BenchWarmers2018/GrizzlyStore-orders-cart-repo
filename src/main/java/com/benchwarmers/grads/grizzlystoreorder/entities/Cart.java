@@ -27,8 +27,12 @@ public class Cart {
     @Temporal(TemporalType.TIMESTAMP)
     private Date last_modified;
 
-    @OneToMany(mappedBy="cart", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy="cart", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItem> items = new ArrayList<>();
+
+    @Column(name = "total", columnDefinition = "Decimal(10,2) default '0.00'")
+    private double total;
+
 
     public Integer getIdCart() {
         return idCart;
@@ -72,9 +76,15 @@ public class Cart {
 
     public void removeItem(CartItem item)
     {
-        item.setCart(this);
         items.remove(item);
     }
 
 
+    public double getTotal() {
+        return total;
+    }
+
+    public void setTotal(double total) {
+        this.total = total;
+    }
 }

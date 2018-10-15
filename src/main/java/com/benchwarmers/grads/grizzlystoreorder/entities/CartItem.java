@@ -27,6 +27,11 @@ public class CartItem {
     @Temporal(TemporalType.TIMESTAMP)
     private Date last_modified;
 
+    @Column( name = "itemPrice", nullable = false)
+    private double itemPrice;
+
+    @Column(name = "total", columnDefinition = "Decimal(10,2) default '0.00'")
+    private double total;
 
     @ManyToOne
     @JoinColumn(name="id_Cart_foreign", nullable=false)
@@ -74,5 +79,21 @@ public class CartItem {
 
     public void setCart(Cart cart) {
         this.cart = cart;
+    }
+
+    public double getItemPrice() {
+        return itemPrice;
+    }
+
+    public void setItemPrice(double itemPrice) {
+        this.itemPrice = itemPrice;
+    }
+
+    public double getTotal() {
+        return total;
+    }
+
+    public void setTotal(double total) {
+        this.total = total;
     }
 }
