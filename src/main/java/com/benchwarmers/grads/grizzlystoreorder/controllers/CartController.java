@@ -29,90 +29,143 @@ public class CartController
         //Grabs the id sent in and converts it to UUID
         UUID accountUUID = cart.getIdAccountForeign();
         //Creates new cart object.
-        Cart newCart = new Cart();
+        Cart cartInDatabase = new Cart();
         //Checks if a cart exists if it does it fetches it else creates a new cart and returns it.
         if (cart_repository.existsByIdAccountForeign(accountUUID))
         {
-            newCart = cart_repository.findCartByIdAccountForeign(accountUUID);
+            cartInDatabase = cart_repository.findCartByIdAccountForeign(accountUUID);
         }
         else
         {
-            newCart.setIdAccountForeign(accountUUID);
-            cart_repository.save(newCart);
+            cartInDatabase.setIdAccountForeign(accountUUID);
+            cart_repository.save(cartInDatabase);
         }
 
-        return newCart;
+        return cartInDatabase;
     }
     //This adds an item to an existing cart.
     @RequestMapping(path = "/add", method = RequestMethod.POST)
     public Cart addToCart(@RequestBody Cart cart)
     {
         UUID accountUUID = cart.getIdAccountForeign();
-        Cart newCart = new Cart();
+        Cart cartInDatabase = new Cart();
+        double cartTotal = 0.0;
+        double cartItemTotal = 0.0;
+        boolean itemExists = false;
+        //Checks if the cart exists and checks if the same item is added again just to combine the quantity and recalculate
         if (cart_repository.existsByIdAccountForeign(accountUUID))
         {
-            newCart = cart_repository.findCartByIdAccountForeign(accountUUID);
-            newCart.addItem(cart.getItems().get(0));
-            cart_repository.save(newCart);
+            //Sets cartInDatabase to grab a cart from the database based on the id given
+            cartInDatabase = cart_repository.findCartByIdAccountForeign(accountUUID);
+            //Calculates the total of the cart item given so it can be added or removed later
+            cartItemTotal = cart.getItems().get(0).getItemQuantity() * cart.getItems().get(0).getItemPrice();
+
+            //This look checks the cartInDatabase if an item that's being added already exists and if it does add the quantity
+            for(int i  = 0; i < cartInDatabase.getItems().size(); ++i)
+            {
+                if(cartInDatabase.getItems().get(i).getIdItem().equals(cart.getItems().get(0).getIdItem()))
+                {
+                    cartInDatabase.getItems().get(i).setItemQuantity(cartInDatabase.getItems().get(i).getItemQuantity() + cart.getItems().get(0).getItemQuantity());
+                    //This gets set to true if the item added exists already.
+                    itemExists = true;
+                    cartInDatabase.getItems().get(i).setTotal(cartInDatabase.getItems().get(i).getTotal()+ cartItemTotal);
+                    //cartTotal = cartInDatabase.getItems().get(i).getTotal();
+                }
+            }
+            //If the item doesn't exist then add it to the cart.
+            if(!itemExists){
+                cart.getItems().get(0).setTotal(cartItemTotal);
+                cartInDatabase.addItem(cart.getItems().get(0));
+                //cartTotal = (cart.getItems().get(0).getItemPrice() * cart.getItems().get(0).getItemQuantity());
+            }
+
+            cartInDatabase.setTotal(cartInDatabase.getTotal() + cartItemTotal);
+
+            cart_repository.save(cartInDatabase);
         }
         else
         {
-            newCart.setIdAccountForeign(accountUUID);
-            newCart.addItem(cart.getItems().get(0));
-            cart_repository.save(newCart);
+            //If a cart doesn't belong to an Account then create a new cart
+            cartInDatabase.setIdAccountForeign(accountUUID);
+            cartItemTotal = cart.getItems().get(0).getItemQuantity() * cart.getItems().get(0).getItemPrice();
+            cart.getItems().get(0).setTotal(cartItemTotal);
+            cartInDatabase.addItem(cart.getItems().get(0));
+            cartTotal = (cart.getItems().get(0).getItemPrice()*cart.getItems().get(0).getItemQuantity());
+            cartInDatabase.setTotal(cartInDatabase.getTotal() + cartTotal);
+            cart_repository.save(cartInDatabase);
         }
 
-        return newCart;
+        return cart_repository.findCartByIdAccountForeign(accountUUID);
     }
-    //Edit Quantity of an existing item in a cart.
-    @RequestMapping(path = "/edit", method = RequestMethod.POST)
-    public Cart editCart(@RequestBody Cart cart)
+    //Updates the cart with new totals based on the quantities.
+    @RequestMapping(path = "/update", method = RequestMethod.POST)
+    public Cart updateCart(@RequestBody Cart cart)
     {
         UUID accountUUID = cart.getIdAccountForeign();
-        Cart newCart = new Cart();
+        Cart cartInDatabase = new Cart();
 
         if (cart_repository.existsByIdAccountForeign(accountUUID))
         {
-            newCart = cart_repository.findCartByIdAccountForeign(accountUUID);
-            List<CartItem> items = newCart.getItems();
+            cartInDatabase = cart_repository.findCartByIdAccountForeign(accountUUID);
+            List<CartItem> items = cartInDatabase.getItems();
+            List<CartItem> items2 = cart.getItems();
 
-            for(int i = 0; i <items.size(); ++i)
+
+            for(int i = 0; i <items2.size(); ++i)
             {
+                for(int j = 0; j < items.size(); ++j)
+                {
+                    if (items.get(j).getIdItem().equals(cart.getItems().get(i).getIdItem()))
+                    {
+                        //This minus's the previous cart total
+                        cartInDatabase.setTotal(cartInDatabase.getTotal() - cartInDatabase.getItems().get(j).getTotal());
+                        //This then sets the cart quantity based on the new values passed.
+                        cartInDatabase.getItems().get(j).setItemQuantity(cart.getItems().get(i).getItemQuantity());
+                        //This then sets each items total
+                        cartInDatabase.getItems().get(j).setTotal(cartInDatabase.getItems().get(j).getItemPrice() * cartInDatabase.getItems().get(j).getItemQuantity());
+                        //This then adds the the cart items total.
+                        cartInDatabase.setTotal(cartInDatabase.getTotal() + (cartInDatabase.getItems().get(j).getItemPrice() * cart.getItems().get(i).getItemQuantity()));
 
+                    }
+                }
             }
-            cart_repository.save(newCart);
+            cart_repository.save(cartInDatabase);
+            return cart_repository.findCartByIdAccountForeign(accountUUID);
         }
-        return newCart;
+        return cartInDatabase;
     }
     //Deletes item from carts
     @RequestMapping(path = "/deleteitem", method = RequestMethod.POST)
     public Cart deleteFromCart(@RequestBody Cart cart)
     {
         UUID accountUUID = cart.getIdAccountForeign();
-        Cart newCart = new Cart();
-
+        Cart cartInDatabase = new Cart();
         if (cart_repository.existsByIdAccountForeign(accountUUID))
         {
-            newCart = cart_repository.findCartByIdAccountForeign(accountUUID);
-            List<CartItem> items = newCart.getItems();
+            cartInDatabase = cart_repository.findCartByIdAccountForeign(accountUUID);
+            List<CartItem> items = cartInDatabase.getItems();
             if(items.size() > 0)
             {
-                newCart.getItems().remove(items.get(0));
+                cartInDatabase.getItems().remove(items.get(0));
+                cartInDatabase.setTotal(cartInDatabase.getTotal() - cart.getItems().get(0).getTotal());
             }
         }
 
-        cart_repository.save(newCart);
-        return newCart;
+        cart_repository.save(cartInDatabase);
+        return cartInDatabase;
     }
     //Deletes the entire cart
     @RequestMapping(path = "/deletecart", method = RequestMethod.POST)
     public Cart deleteWholeCart(@RequestBody Cart cart)
     {
-        UUID accountUUID = cart.getIdAccountForeign();
-        Cart newCart = cart_repository.findCartByIdAccountForeign(accountUUID);
-        newCart.getItems().clear();
 
-        cart_repository.save(newCart);
-        return newCart;
+        UUID accountUUID = cart.getIdAccountForeign();
+        Cart cartInDatabase = cart_repository.findCartByIdAccountForeign(accountUUID);
+        //Clears the cart so all items are removed but the actual cart is not removed.
+        cartInDatabase.getItems().clear();
+        //The total of the cart is then set to 0.00 and saved.
+        cartInDatabase.setTotal(0.00);
+        cart_repository.save(cartInDatabase);
+        return cartInDatabase;
     }
 }
