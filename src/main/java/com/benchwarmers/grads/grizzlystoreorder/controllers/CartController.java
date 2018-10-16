@@ -49,20 +49,46 @@ public class CartController
     {
         UUID accountUUID = cart.getIdAccountForeign();
         Cart newCart = new Cart();
+        double cartTotal = 0.0;
+        double cartItemTotal = 0.0;
+        boolean itemExists = false;
+        //Checks if the cart exists
         if (cart_repository.existsByIdAccountForeign(accountUUID))
         {
             newCart = cart_repository.findCartByIdAccountForeign(accountUUID);
-            newCart.addItem(cart.getItems().get(0));
+            cartItemTotal = cart.getItems().get(0).getItemQuantity() * cart.getItems().get(0).getItemPrice();
+            for(int i  = 0; i < newCart.getItems().size(); ++i)
+            {
+                if(newCart.getItems().get(i).getIdItem().equals(cart.getItems().get(0).getIdItem()))
+                {
+                    newCart.getItems().get(i).setItemQuantity(newCart.getItems().get(i).getItemQuantity() + cart.getItems().get(0).getItemQuantity());
+                    itemExists = true;
+                    newCart.getItems().get(i).setTotal(newCart.getItems().get(i).getTotal()+ cartItemTotal);
+                    //cartTotal = newCart.getItems().get(i).getTotal();
+                }
+            }
+            if(!itemExists){
+                cart.getItems().get(0).setTotal(cartItemTotal);
+                newCart.addItem(cart.getItems().get(0));
+                //cartTotal = (cart.getItems().get(0).getItemPrice() * cart.getItems().get(0).getItemQuantity());
+            }
+
+            newCart.setTotal(newCart.getTotal() + cartItemTotal);
+
             cart_repository.save(newCart);
         }
         else
         {
             newCart.setIdAccountForeign(accountUUID);
+            cartItemTotal = cart.getItems().get(0).getItemQuantity() * cart.getItems().get(0).getItemPrice();
+            cart.getItems().get(0).setTotal(cartItemTotal);
             newCart.addItem(cart.getItems().get(0));
+            cartTotal = (cart.getItems().get(0).getItemPrice()*cart.getItems().get(0).getItemQuantity());
+            newCart.setTotal(newCart.getTotal() + cartTotal);
             cart_repository.save(newCart);
         }
 
-        return newCart;
+        return cart_repository.findCartByIdAccountForeign(accountUUID);
     }
     //Edit Quantity of an existing item in a cart.
     @RequestMapping(path = "/edit", method = RequestMethod.POST)
@@ -75,12 +101,24 @@ public class CartController
         {
             newCart = cart_repository.findCartByIdAccountForeign(accountUUID);
             List<CartItem> items = newCart.getItems();
+            List<CartItem> items2 = cart.getItems();
 
-            for(int i = 0; i <items.size(); ++i)
+            for(int i = 0; i <items2.size(); ++i)
             {
+                for(int j = 0; j < items.size(); ++j)
+                {
+                    if (items.get(j).getIdItem().equals(cart.getItems().get(i).getIdItem()))
+                    {
+                        newCart.setTotal(newCart.getTotal() - newCart.getItems().get(j).getTotal());
+                        newCart.getItems().get(j).setItemQuantity(cart.getItems().get(i).getItemQuantity());
+                        newCart.getItems().get(j).setTotal(newCart.getItems().get(j).getItemPrice() * newCart.getItems().get(j).getItemQuantity());
+                        newCart.setTotal(newCart.getTotal() + (newCart.getItems().get(j).getItemPrice() * cart.getItems().get(i).getItemQuantity()));
 
+                    }
+                }
             }
             cart_repository.save(newCart);
+            return cart_repository.findCartByIdAccountForeign(accountUUID);
         }
         return newCart;
     }
@@ -98,6 +136,7 @@ public class CartController
             if(items.size() > 0)
             {
                 newCart.getItems().remove(items.get(0));
+                newCart.setTotal(newCart.getTotal() - cart.getItems().get(0).getTotal());
             }
         }
 
@@ -111,7 +150,7 @@ public class CartController
         UUID accountUUID = cart.getIdAccountForeign();
         Cart newCart = cart_repository.findCartByIdAccountForeign(accountUUID);
         newCart.getItems().clear();
-
+        newCart.setTotal(0.00);
         cart_repository.save(newCart);
         return newCart;
     }
