@@ -31,4 +31,35 @@ public class Transaction {
     @OneToMany(mappedBy="transaction")
     private List<TransactionItem> items = new ArrayList<>();
 
+    public Integer getId_transaction() {
+        return id_transaction;
+    }
+
+    public void setId_transaction(Integer id_transaction) {
+        this.id_transaction = id_transaction;
+    }
+
+    public UUID getId_Account_Foreign() {
+        return id_Account_Foreign;
+    }
+
+    public void setId_Account_Foreign(UUID id_Account_Foreign) {
+        this.id_Account_Foreign = id_Account_Foreign;
+    }
+
+    public double getOrder_Total() {
+        return order_Total;
+    }
+
+    public void setOrder_Total(double order_Total) {
+        this.order_Total = order_Total;
+    }
+
+    public List<TransactionItem> getItems() {
+        return items;
+    }
+
+    public void setItems(List<TransactionItem> items) {
+        this.items = items;
+    }
 }

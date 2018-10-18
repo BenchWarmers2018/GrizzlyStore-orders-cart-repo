@@ -19,6 +19,12 @@ public class TransactionItem {
     @Column(name = "item_Quantity", nullable = false)
     private Integer item_Quantity;
 
+    @Column(name = "total", columnDefinition = "Decimal(10,2) default '0.00'")
+    private double total;
+
+    @Column( name = "itemPrice", nullable = false)
+    private double itemPrice;
+
     @CreationTimestamp
     @Column(name = "last_modified", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -28,4 +34,43 @@ public class TransactionItem {
     @JoinColumn(name="id_Transaction_foreign", nullable=false)
     private Transaction transaction;
 
+    public double getTotal() {
+        return total;
+    }
+
+    public void setTotal(double total) {
+        this.total = total;
+    }
+
+    public double getItemPrice() {
+        return itemPrice;
+    }
+
+    public void setItemPrice(double itemPrice) {
+        this.itemPrice = itemPrice;
+    }
+
+    public Integer getItem_Quantity() {
+        return item_Quantity;
+    }
+
+    public void setItem_Quantity(Integer item_Quantity) {
+        this.item_Quantity = item_Quantity;
+    }
+
+    public Integer getId_Item() {
+        return id_Item;
+    }
+
+    public void setId_Item(Integer id_Item) {
+        this.id_Item = id_Item;
+    }
+
+    public Integer getId_TransactionItem() {
+        return id_TransactionItem;
+    }
+
+    public void setId_TransactionItem(Integer id_TransactionItem) {
+        this.id_TransactionItem = id_TransactionItem;
+    }
 }

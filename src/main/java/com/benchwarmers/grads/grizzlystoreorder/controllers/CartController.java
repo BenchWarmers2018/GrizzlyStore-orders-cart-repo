@@ -135,7 +135,7 @@ public class CartController
         return cartInDatabase;
     }
     //Deletes item from carts
-    @RequestMapping(path = "/deleteitem", method = RequestMethod.POST)
+    @RequestMapping(path = "/deleteitem", method = RequestMethod.DELETE)
     public Cart deleteFromCart(@RequestBody Cart cart)
     {
         UUID accountUUID = cart.getIdAccountForeign();
@@ -155,7 +155,7 @@ public class CartController
         return cartInDatabase;
     }
     //Deletes the entire cart
-    @RequestMapping(path = "/deletecart", method = RequestMethod.POST)
+    @RequestMapping(path = "/deletecart", method = RequestMethod.DELETE)
     public Cart deleteWholeCart(@RequestBody Cart cart)
     {
 
