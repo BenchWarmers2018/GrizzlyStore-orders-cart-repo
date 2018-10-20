@@ -44,7 +44,7 @@ public class OrderController
             //This sets the transaction to what the cart in the database is.
             transaction.setIdAccountForeign(accountUUID);
             transaction.setOrder_Total(confirmedOrder.getTotal());
-            //List<TransactionItem> transactionItems = transaction.getItems();
+            List<TransactionItem> transactionItems = transaction.getItems();
             //The loop adds each item from the cart to the transaction items list.
             for(int i = 0; i < confirmedOrder.getItems().size(); ++i)
             {
@@ -54,7 +54,9 @@ public class OrderController
                 transactionItem.setIdItem(confirmedOrder.getItems().get(i).getIdItem());
                 transactionItem.setItemQuantity(confirmedOrder.getItems().get(i).getItemQuantity());
                 transactionItem.setTotal(confirmedOrder.getItems().get(i).getTotal());
+                //transactionItem.setTransaction(transaction);
 
+                //transactionItems.add(transactionItem);
                 transaction.addItems(transactionItem);
             }
             //Once all items are set the items are then stored in the transaction
@@ -65,6 +67,7 @@ public class OrderController
             //The cart is then saved as well as the transaction then the transaction is passed back.
             cart_repository.save(confirmedOrder);
             transaction_repository.save(transaction);
+
         }
 
         return transaction;
@@ -81,7 +84,14 @@ public class OrderController
         if(transaction_repository.existsByIdAccountForeign(accountUUID))
         {
             orderList = transaction_repository.findAllByIdAccountForeign(accountUUID);
+
         }
         return orderList;
     }
+
+//    @RequestMapping(path = "/seed")
+//    public Transaction test()
+//    {
+//        TransactionItem =
+//    }
 }
