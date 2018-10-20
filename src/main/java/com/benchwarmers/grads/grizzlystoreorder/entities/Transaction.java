@@ -1,6 +1,7 @@
 package com.benchwarmers.grads.grizzlystoreorder.entities;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class Transaction {
     private Integer idTransaction;
 
     @Column(name = "idAccountForeign", nullable = false)
+    @Type(type="uuid-char")
     private UUID idAccountForeign;
 
     @Column(name = "order_Total", nullable = false)
@@ -28,7 +30,7 @@ public class Transaction {
     @Temporal(TemporalType.TIMESTAMP)
     private Date last_modified;
 
-    @OneToMany(mappedBy="transaction")
+    @OneToMany(mappedBy="transaction", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TransactionItem> items = new ArrayList<>();
 
     public Integer getIdTransaction() {
