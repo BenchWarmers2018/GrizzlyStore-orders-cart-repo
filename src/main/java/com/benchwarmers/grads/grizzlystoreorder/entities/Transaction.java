@@ -14,11 +14,11 @@ public class Transaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id_transaction", nullable = false)
-    private Integer id_transaction;
+    @Column(name = "idTransaction", nullable = false)
+    private Integer idTransaction;
 
-    @Column(name = "id_Account_Foreign", nullable = false)
-    private UUID id_Account_Foreign;
+    @Column(name = "idAccountForeign", nullable = false)
+    private UUID idAccountForeign;
 
     @Column(name = "order_Total", nullable = false)
     private double order_Total;
@@ -31,20 +31,20 @@ public class Transaction {
     @OneToMany(mappedBy="transaction")
     private List<TransactionItem> items = new ArrayList<>();
 
-    public Integer getId_transaction() {
-        return id_transaction;
+    public Integer getIdTransaction() {
+        return idTransaction;
     }
 
-    public void setId_transaction(Integer id_transaction) {
-        this.id_transaction = id_transaction;
+    public void setIdTransaction(Integer idTransaction) {
+        this.idTransaction = idTransaction;
     }
 
-    public UUID getId_Account_Foreign() {
-        return id_Account_Foreign;
+    public UUID getIdAccountForeign() {
+        return idAccountForeign;
     }
 
-    public void setId_Account_Foreign(UUID id_Account_Foreign) {
-        this.id_Account_Foreign = id_Account_Foreign;
+    public void setIdAccountForeign(UUID idAccountForeign) {
+        this.idAccountForeign = idAccountForeign;
     }
 
     public double getOrder_Total() {
@@ -59,7 +59,13 @@ public class Transaction {
         return items;
     }
 
+    public void addItems(TransactionItem item) {
+        item.setTransaction(this);
+        items.add(item);
+    }
+
     public void setItems(List<TransactionItem> items) {
+        items.forEach(transactionItem -> transactionItem.setTransaction(this));
         this.items = items;
     }
 }

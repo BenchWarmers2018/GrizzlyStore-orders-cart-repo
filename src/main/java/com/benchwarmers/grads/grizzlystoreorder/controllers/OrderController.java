@@ -10,12 +10,13 @@ import com.benchwarmers.grads.grizzlystoreorder.repositories.Transaction_Reposit
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @RestController
 @CrossOrigin
-@RequestMapping(path = "/process")
+@RequestMapping(path = "/order")
 public class OrderController
 {
     @Autowired
@@ -27,7 +28,7 @@ public class OrderController
     @Autowired
     Transaction_Repository transaction_repository;
 
-    @RequestMapping(path = "/order", method = RequestMethod.POST)
+    @RequestMapping(path = "/process", method = RequestMethod.POST)
     public Transaction processOrder(@RequestBody Cart cart)
     {
         //Grabs the UUID from the cart given
@@ -41,23 +42,23 @@ public class OrderController
         if(confirmedOrder.getIdCart().equals(cart.getIdCart()))
         {
             //This sets the transaction to what the cart in the database is.
-            transaction.setId_Account_Foreign(accountUUID);
+            transaction.setIdAccountForeign(accountUUID);
             transaction.setOrder_Total(confirmedOrder.getTotal());
-            List<TransactionItem> transactionItems = transaction.getItems();
+            //List<TransactionItem> transactionItems = transaction.getItems();
             //The loop adds each item from the cart to the transaction items list.
             for(int i = 0; i < confirmedOrder.getItems().size(); ++i)
             {
                 TransactionItem transactionItem = new TransactionItem();
 
                 transactionItem.setItemPrice(confirmedOrder.getItems().get(i).getItemPrice());
-                transactionItem.setId_Item(confirmedOrder.getItems().get(i).getIdItem());
-                transactionItem.setItem_Quantity(confirmedOrder.getItems().get(i).getItemQuantity());
+                transactionItem.setIdItem(confirmedOrder.getItems().get(i).getIdItem());
+                transactionItem.setItemQuantity(confirmedOrder.getItems().get(i).getItemQuantity());
                 transactionItem.setTotal(confirmedOrder.getItems().get(i).getTotal());
 
-                transactionItems.add(transactionItem);
+                transaction.addItems(transactionItem);
             }
             //Once all items are set the items are then stored in the transaction
-            transaction.setItems(transactionItems);
+            //transaction.setItems(transactionItems);
             //The old cart is cleared here ready for next use.
             confirmedOrder.getItems().clear();
             confirmedOrder.setTotal(0.00);
@@ -68,5 +69,19 @@ public class OrderController
 
         return transaction;
 
+    }
+
+    @RequestMapping(path = "/all", method = RequestMethod.POST)
+    public List<Transaction> returnOrders(@RequestBody Transaction transaction)
+    {
+        //Grabs the UUID from the cart given
+        UUID accountUUID = transaction.getIdAccountForeign();
+        //Looks for the cart by the account UUID
+        List<Transaction> orderList = new ArrayList<>();
+        if(transaction_repository.existsByIdAccountForeign(accountUUID))
+        {
+            orderList = transaction_repository.findAllByIdAccountForeign(accountUUID);
+        }
+        return orderList;
     }
 }
