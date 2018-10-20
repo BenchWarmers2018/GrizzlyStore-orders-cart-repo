@@ -1,5 +1,6 @@
 package com.benchwarmers.grads.grizzlystoreorder.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -10,14 +11,14 @@ import java.util.Date;
 public class TransactionItem {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id_TransactionItem", nullable = false)
-    private Integer id_TransactionItem;
+    @Column(name = "idTransactionItem", nullable = false)
+    private Integer idTransactionItem;
 
-    @Column(name = "id_Item", nullable = false)
-    private Integer id_Item;
+    @Column(name = "idItem", nullable = false)
+    private Integer idItem;
 
-    @Column(name = "item_Quantity", nullable = false)
-    private Integer item_Quantity;
+    @Column(name = "itemQuantity", nullable = false)
+    private Integer itemQuantity;
 
     @Column(name = "total", columnDefinition = "Decimal(10,2) default '0.00'")
     private double total;
@@ -32,6 +33,7 @@ public class TransactionItem {
 
     @ManyToOne
     @JoinColumn(name="id_Transaction_foreign", nullable=false)
+    @JsonIgnore
     private Transaction transaction;
 
     public double getTotal() {
@@ -50,27 +52,35 @@ public class TransactionItem {
         this.itemPrice = itemPrice;
     }
 
-    public Integer getItem_Quantity() {
-        return item_Quantity;
+    public Integer getItemQuantity() {
+        return itemQuantity;
     }
 
-    public void setItem_Quantity(Integer item_Quantity) {
-        this.item_Quantity = item_Quantity;
+    public void setItemQuantity(Integer itemQuantity) {
+        this.itemQuantity = itemQuantity;
     }
 
-    public Integer getId_Item() {
-        return id_Item;
+    public Integer getIdItem() {
+        return idItem;
     }
 
-    public void setId_Item(Integer id_Item) {
-        this.id_Item = id_Item;
+    public void setIdItem(Integer idItem) {
+        this.idItem = idItem;
     }
 
-    public Integer getId_TransactionItem() {
-        return id_TransactionItem;
+    public Integer getIdTransactionItem() {
+        return idTransactionItem;
     }
 
-    public void setId_TransactionItem(Integer id_TransactionItem) {
-        this.id_TransactionItem = id_TransactionItem;
+    public void setIdTransactionItem(Integer idTransactionItem) {
+        this.idTransactionItem = idTransactionItem;
+    }
+
+    public Transaction getTransaction() {
+        return transaction;
+    }
+
+    public void setTransaction(Transaction transaction) {
+        this.transaction = transaction;
     }
 }

@@ -43,21 +43,21 @@ public class OrderController
             //This sets the transaction to what the cart in the database is.
             transaction.setId_Account_Foreign(accountUUID);
             transaction.setOrder_Total(confirmedOrder.getTotal());
-            List<TransactionItem> transactionItems = transaction.getItems();
+            //List<TransactionItem> transactionItems = transaction.getItems();
             //The loop adds each item from the cart to the transaction items list.
             for(int i = 0; i < confirmedOrder.getItems().size(); ++i)
             {
                 TransactionItem transactionItem = new TransactionItem();
 
                 transactionItem.setItemPrice(confirmedOrder.getItems().get(i).getItemPrice());
-                transactionItem.setId_Item(confirmedOrder.getItems().get(i).getIdItem());
-                transactionItem.setItem_Quantity(confirmedOrder.getItems().get(i).getItemQuantity());
+                transactionItem.setIdItem(confirmedOrder.getItems().get(i).getIdItem());
+                transactionItem.setItemQuantity(confirmedOrder.getItems().get(i).getItemQuantity());
                 transactionItem.setTotal(confirmedOrder.getItems().get(i).getTotal());
 
-                transactionItems.add(transactionItem);
+                transaction.addItems(transactionItem);
             }
             //Once all items are set the items are then stored in the transaction
-            transaction.setItems(transactionItems);
+            //transaction.setItems(transactionItems);
             //The old cart is cleared here ready for next use.
             confirmedOrder.getItems().clear();
             confirmedOrder.setTotal(0.00);

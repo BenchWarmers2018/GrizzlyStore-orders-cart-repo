@@ -59,7 +59,13 @@ public class Transaction {
         return items;
     }
 
+    public void addItems(TransactionItem item) {
+        item.setTransaction(this);
+        items.add(item);
+    }
+
     public void setItems(List<TransactionItem> items) {
+        items.forEach(transactionItem -> transactionItem.setTransaction(this));
         this.items = items;
     }
 }
